@@ -10,7 +10,8 @@ import pandas as pd
 from datetime import datetime
 
 #Diretório raiz
-diretorio = 'C:/Users/User/Desktop/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
+diretorio = input('Insira o diretório onde está a planilha fonte:') + '/'
+#diretorio = 'C:/Users/User/Desktop/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
 
 #Lista de funções
 def ajeita_data():
@@ -87,8 +88,8 @@ def filt_dados(dados, nome_coluna, condicao):
 meta_selic = dados_serie_sgs('432')
 
 #Importação do arquivo excel vindo do site do tesouro nacional
-titulo = importar_xlsx('Teste.xlsx')
-a = pd.read_excel(diretorio + 'Teste.xlsx', header = None)
+arquivo_importado = input('Insira nome do arquivo excel a ser importado:') + '.xlsx'
+titulo = importar_xlsx(arquivo_importado)
 
 #Organizando dados de acordo com data do leilão
 titulo = organiza(titulo, 'Data do leilão')
@@ -108,7 +109,9 @@ titulo = filt_dados(titulo, 'Volta', '1.ª volta')
 
 #3)Data de vencimento
 datas_disponiveis = pd.DataFrame(pd.unique(titulo['Data de vencimento']))
-print(datas_disponiveis)
+datas_disponiveis = datas_disponiveis.rename(columns = {0: ''})
+print('Datas de vencimento disponíveis:')
+print(datas_disponiveis.to_string(index=False))
 
 while True:
     try:
@@ -130,7 +133,8 @@ titulo = pd.merge(meta_selic, titulo, on = 'Data do leilão')
 titulo['Spread'] = titulo['Taxa média'] - titulo['Meta SELIC']
 
 #Exportando para excel
-titulo.to_excel(diretorio + 'spread_titulo.xlsx', index = False)
+arquivo_exportado = input('Insira nome do arquivo excel a ser criado:') + '.xlsx'
+titulo.to_excel(diretorio + arquivo_exportado, index = False)
 
 
 
