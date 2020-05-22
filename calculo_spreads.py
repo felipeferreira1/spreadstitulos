@@ -143,6 +143,13 @@ for i in range(len(datas_disponiveis)):
         spread_merge = spread
     else:
         spread_merge = spread_merge.merge(spread, how='outer',on='Data do leilão')
+        
+    tx_media = aba_titulo[['Data do leilão', 'Taxa média']]
+    tx_media = tx_media.rename(columns = {'Taxa média': nome_aba})
+    if i == 0:
+        tx_media_merge = tx_media
+    else:
+        tx_media_merge = tx_media_merge.merge(tx_media, how='outer',on='Data do leilão')
 
 
 ###IMPORTAÇÃO DO ARQUIVO DA NTN-F###
@@ -193,15 +200,26 @@ for i in range(len(datas_disponiveis2)):
         spread_merge2 = spread2
     else:
         spread_merge2 = spread_merge2.merge(spread2, how='outer',on='Data do leilão')
+        
+    tx_media2 = aba_titulo2[['Data do leilão', 'Taxa média']]
+    tx_media2 = tx_media2.rename(columns = {'Taxa média': nome_aba2})
+    if i == 0:
+        tx_media_merge2 = tx_media2
+    else:
+        tx_media_merge2 = tx_media_merge2.merge(tx_media2, how='outer',on='Data do leilão')
 
 
-###Juntando spreads e salvando no arquivo###
+###Juntando resumos e salvando no arquivo###
 spread_final = pd.merge(spread_merge, spread_merge2, how='outer',on='Data do leilão')
 spread_final = spread_final.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
+
+tx_media_final = pd.merge(tx_media_merge, tx_media_merge2, how='outer',on='Data do leilão')
+tx_media_final = tx_media_final.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
 
 
 with pd.ExcelWriter(writer, mode = 'a') as writer:  
     spread_final.to_excel(writer, index = False, sheet_name = 'Spreads')
+    tx_media_final.to_excel(writer, index = False, sheet_name = 'Taxa média')
 
 
 
