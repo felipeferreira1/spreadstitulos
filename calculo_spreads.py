@@ -84,11 +84,15 @@ def filt_dados(dados, nome_coluna, condicao):
     dados_filtrados = dados[is_condicao]
     return dados_filtrados
 
-#Importação de série com meta selic diária
+#Importação de série e tratamento com meta selic diária
 meta_selic = dados_serie_sgs('432')
+meta_selic = transforma_data(meta_selic, 'data', '%d/%m/%Y')
+meta_selic = meta_selic.rename(columns = {'data':'Data do leilão', '432':'Meta SELIC'})
 
+
+###IMPORTAÇÃO DO ARQUIVO DA LTN###
 #Importação do arquivo excel vindo do site do tesouro nacional
-arquivo_importado = input('Insira nome do arquivo excel a ser importado:') + '.xlsx'
+arquivo_importado = input('Insira nome do arquivo excel da LTN a ser importado:') + '.xlsx'
 titulo = importar_xlsx(arquivo_importado)
 
 #Organizando dados de acordo com data do leilão
@@ -98,7 +102,6 @@ titulo = organiza(titulo, 'Data do leilão')
 titulo = transforma_data(titulo, 'Data do leilão')
 titulo = transforma_data(titulo, 'Data de liquidação')
 titulo = transforma_data(titulo, 'Data de vencimento')
-meta_selic = transforma_data(meta_selic, 'data', '%d/%m/%Y')
 
 #Filtros
 #1)Tipo de leilão
@@ -107,7 +110,6 @@ titulo = filt_dados(titulo, 'Tipo de leilão', 'Venda')
 titulo = filt_dados(titulo, 'Volta', '1.ª volta')
     
 #3)Data de vencimento e inserção da meta SELIC
-meta_selic = meta_selic.rename(columns = {'data':'Data do leilão', '432':'Meta SELIC'})
 
 datas_disponiveis = pd.unique(titulo['Data de vencimento']) #usado para filtrar as diferentes datas de vencimento
 datas_disponiveis.sort() #Ordenar cronologicamente as datas
@@ -115,7 +117,7 @@ datas_disponiveis.sort() #Ordenar cronologicamente as datas
 nome_datas_disponiveis = pd.DataFrame(pd.unique(titulo['Data de vencimento'])) #usado pra nomear as abas da planilha
 nome_datas_disponiveis = organiza(nome_datas_disponiveis, 0)
 
-tipo_titulo = input('Qual o tipo do título? (LTN ou NTN_F): ')
+tipo_titulo = 'LTN'
     
 for i in range(len(datas_disponiveis)):
     data_vencimento = datas_disponiveis[i]
@@ -127,7 +129,7 @@ for i in range(len(datas_disponiveis)):
     nome_titulo = tipo_titulo + '_' + str(data_pro_nome)
     nome_aba = nome_titulo[:8]
     exec(nome_titulo + " = aba_titulo")
-    writer = diretorio + tipo_titulo + '.xlsx'
+    writer = diretorio + 'Titulos_spreads_taxas.xlsx'
     
     if i == 0:
         aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)
@@ -135,17 +137,71 @@ for i in range(len(datas_disponiveis)):
         with pd.ExcelWriter(writer, mode = 'a') as writer:
             aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)        
                     
-    spread = aba_titulo[['Data do leilão','Data de vencimento', 'Spread']]
-    spread = spread.rename(columns = {'Data de vencimento':'Vencimento '+ nome_aba ,'Spread': nome_aba})
+    spread = aba_titulo[['Data do leilão', 'Spread']]
+    spread = spread.rename(columns = {'Spread': nome_aba})
     if i == 0:
         spread_merge = spread
     else:
         spread_merge = spread_merge.merge(spread, how='outer',on='Data do leilão')
 
-spread_merge.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
+
+###IMPORTAÇÃO DO ARQUIVO DA NTN-F###
+#Importação do arquivo excel vindo do site do tesouro nacional
+arquivo_importado2 = input('Insira nome do arquivo excel da NTN-F a ser importado:') + '.xlsx'
+titulo2 = importar_xlsx(arquivo_importado2)
+
+#Organizando dados de acordo com data do leilão
+titulo2 = organiza(titulo2, 'Data do leilão')
+
+#Formatando datas
+titulo2 = transforma_data(titulo2, 'Data do leilão')
+titulo2 = transforma_data(titulo2, 'Data de liquidação')
+titulo2 = transforma_data(titulo2, 'Data de vencimento')
+
+#Filtros
+#1)Tipo de leilão
+titulo2 = filt_dados(titulo2, 'Tipo de leilão', 'Venda')
+#2)Volta
+titulo2 = filt_dados(titulo2, 'Volta', '1.ª volta')
+    
+#3)Data de vencimento e inserção da meta SELIC
+
+datas_disponiveis2 = pd.unique(titulo2['Data de vencimento']) #usado para filtrar as diferentes datas de vencimento
+datas_disponiveis2.sort() #Ordenar cronologicamente as datas
+
+nome_datas_disponiveis2 = pd.DataFrame(pd.unique(titulo2['Data de vencimento'])) #usado pra nomear as abas da planilha
+nome_datas_disponiveis2 = organiza(nome_datas_disponiveis2, 0)
+
+tipo_titulo2 = 'NTN_F'
+    
+for i in range(len(datas_disponiveis2)):
+    data_vencimento2 = datas_disponiveis2[i]
+    aba_titulo2 = filt_dados(titulo2, 'Data de vencimento', data_vencimento2)
+    aba_titulo2 = pd.merge(meta_selic, aba_titulo2, on = 'Data do leilão')
+    aba_titulo2['Spread'] = aba_titulo2['Taxa média'] - aba_titulo2['Meta SELIC']
+    data_pro_nome2 = str(nome_datas_disponiveis2.iloc[[i]])[-10:]
+    data_pro_nome2 = data_pro_nome2.replace('-','_')
+    nome_titulo2 = tipo_titulo2 + '_' + str(data_pro_nome2)
+    nome_aba2 = nome_titulo2[:10]
+    exec(nome_titulo2 + " = aba_titulo2")
+    with pd.ExcelWriter(writer, mode = 'a') as writer:
+        aba_titulo2.to_excel(writer, index = False, sheet_name = nome_aba2)
+                    
+    spread2 = aba_titulo2[['Data do leilão', 'Spread']]
+    spread2 = spread2.rename(columns = {'Spread': nome_aba2})
+    if i == 0:
+        spread_merge2 = spread2
+    else:
+        spread_merge2 = spread_merge2.merge(spread2, how='outer',on='Data do leilão')
+
+
+###Juntando spreads e salvando no arquivo###
+spread_final = pd.merge(spread_merge, spread_merge2, how='outer',on='Data do leilão')
+spread_final = spread_final.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
+
 
 with pd.ExcelWriter(writer, mode = 'a') as writer:  
-    spread_merge.to_excel(writer, index = False, sheet_name = 'Spreads')
+    spread_final.to_excel(writer, index = False, sheet_name = 'Spreads')
 
 
 
