@@ -10,8 +10,8 @@ import pandas as pd
 from datetime import datetime
 
 #Diretório raiz
-diretorio = input('Insira o diretório onde está a planilha fonte:') + '/'
-#diretorio = 'C:/Users/User/Desktop/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
+#diretorio = input('Insira o diretório onde está a planilha fonte:') + '/'
+diretorio = 'C:/Users/User/Desktop/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
 
 #Lista de funções
 def ajeita_data():
@@ -103,38 +103,50 @@ meta_selic = transforma_data(meta_selic, 'data', '%d/%m/%Y')
 #Filtros
 #1)Tipo de leilão
 titulo = filt_dados(titulo, 'Tipo de leilão', 'Venda')
-
 #2)Volta
 titulo = filt_dados(titulo, 'Volta', '1.ª volta')
-
-#3)Data de vencimento
-datas_disponiveis = pd.DataFrame(pd.unique(titulo['Data de vencimento']))
-datas_disponiveis = datas_disponiveis.rename(columns = {0: ''})
-print('Datas de vencimento disponíveis:')
-print(datas_disponiveis.to_string(index=False))
-
-while True:
-    try:
-        data_vencimento = input('Data de vencimento dos títulos:')
-        data_vencimento  = datetime.strptime(data_vencimento, '%Y-%m-%d')
-    except ValueError:
-        print('Coloque uma data no formato mostrado acima!')
-        continue
-    else:
-        break
-
-titulo = filt_dados(titulo, 'Data de vencimento', data_vencimento)
-
-#Inserção da meta selic
+    
+#3)Data de vencimento e inserção da meta SELIC
 meta_selic = meta_selic.rename(columns = {'data':'Data do leilão', '432':'Meta SELIC'})
-titulo = pd.merge(meta_selic, titulo, on = 'Data do leilão')
 
-#Cálculos
-titulo['Spread'] = titulo['Taxa média'] - titulo['Meta SELIC']
+datas_disponiveis = pd.unique(titulo['Data de vencimento']) #usado para filtrar as diferentes datas de vencimento
+datas_disponiveis.sort() #Ordenar cronologicamente as datas
 
-#Exportando para excel
-arquivo_exportado = input('Insira nome do arquivo excel a ser criado:') + '.xlsx'
-titulo.to_excel(diretorio + arquivo_exportado, index = False)
+nome_datas_disponiveis = pd.DataFrame(pd.unique(titulo['Data de vencimento'])) #usado pra nomear as abas da planilha
+nome_datas_disponiveis = organiza(nome_datas_disponiveis, 0)
+
+tipo_titulo = input('Qual o tipo do título? (LTN ou NTN_F): ')
+    
+for i in range(len(datas_disponiveis)):
+    data_vencimento = datas_disponiveis[i]
+    aba_titulo = filt_dados(titulo, 'Data de vencimento', data_vencimento)
+    aba_titulo = pd.merge(meta_selic, aba_titulo, on = 'Data do leilão')
+    aba_titulo['Spread'] = aba_titulo['Taxa média'] - aba_titulo['Meta SELIC']
+    data_pro_nome = str(nome_datas_disponiveis.iloc[[i]])[-10:]
+    data_pro_nome = data_pro_nome.replace('-','_')
+    nome_titulo = tipo_titulo + '_' + str(data_pro_nome)
+    nome_aba = nome_titulo[:8]
+    exec(nome_titulo + " = aba_titulo")
+    writer = diretorio + tipo_titulo + '.xlsx'
+    
+    if i == 0:
+        aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)
+    else:
+        with pd.ExcelWriter(writer, mode = 'a') as writer:
+            aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)        
+                    
+    spread = aba_titulo[['Data do leilão','Data de vencimento', 'Spread']]
+    spread = spread.rename(columns = {'Data de vencimento':'Vencimento '+ nome_aba ,'Spread': nome_aba})
+    if i == 0:
+        spread_merge = spread
+    else:
+        spread_merge = spread_merge.merge(spread, how='outer',on='Data do leilão')
+
+spread_merge.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
+
+with pd.ExcelWriter(writer, mode = 'a') as writer:  
+    spread_merge.to_excel(writer, index = False, sheet_name = 'Spreads')
+
 
 
 
