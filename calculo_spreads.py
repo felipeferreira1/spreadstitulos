@@ -84,6 +84,15 @@ def filt_dados(dados, nome_coluna, condicao):
     dados_filtrados = dados[is_condicao]
     return dados_filtrados
 
+def transforma_numero(dados, nomecoluna):
+    '''Funcao que transforma strings em dados numéricos
+    Parâmetro de entrada: DataFrame, str
+    Valor de retorno: DataFrame'''
+    dados[nomecoluna] = dados[nomecoluna].str.replace('.', '')
+    dados[nomecoluna] = dados[nomecoluna].str.replace(',', '.')
+    dados[nomecoluna] = pd.to_numeric(dados[nomecoluna])
+    return dados[nomecoluna]
+
 #Importação de série e tratamento com meta selic diária
 meta_selic = dados_serie_sgs('432')
 meta_selic = transforma_data(meta_selic, 'data', '%d/%m/%Y')
@@ -95,13 +104,22 @@ meta_selic = meta_selic.rename(columns = {'data':'Data do leilão', '432':'Meta 
 arquivo_importado = input('Insira nome do arquivo excel da LTN a ser importado:') + '.xlsx'
 titulo = importar_xlsx(arquivo_importado)
 
+#Formatando datas
+titulo = transforma_data(titulo, 'Data do leilão', formato = '%d/%m/%Y')
+titulo = transforma_data(titulo, 'Data de liquidação', formato = '%d/%m/%Y')
+titulo = transforma_data(titulo, 'Data de vencimento', formato = '%d/%m/%Y')
+
+#Formatando como número
+titulo['Oferta'] = transforma_numero(titulo, 'Oferta')
+titulo['Taxa média'] = transforma_numero(titulo, 'Taxa média')
+titulo['Taxa de corte'] = transforma_numero(titulo, 'Taxa de corte')
+titulo['Venda'] = transforma_numero(titulo, 'Venda')
+titulo['Financeiro (R$)'] = transforma_numero(titulo, 'Financeiro (R$)')
+titulo['Venda para Bacen'] = transforma_numero(titulo, 'Venda para Bacen')
+titulo['Financeiro para Bacen (R$)'] = transforma_numero(titulo, 'Financeiro para Bacen (R$)')
+
 #Organizando dados de acordo com data do leilão
 titulo = organiza(titulo, 'Data do leilão')
-
-#Formatando datas
-titulo = transforma_data(titulo, 'Data do leilão')
-titulo = transforma_data(titulo, 'Data de liquidação')
-titulo = transforma_data(titulo, 'Data de vencimento')
 
 #Filtros
 #1)Tipo de leilão
@@ -157,13 +175,22 @@ for i in range(len(datas_disponiveis)):
 arquivo_importado2 = input('Insira nome do arquivo excel da NTN-F a ser importado:') + '.xlsx'
 titulo2 = importar_xlsx(arquivo_importado2)
 
+#Formatando datas
+titulo2 = transforma_data(titulo2, 'Data do leilão', formato = '%d/%m/%Y')
+titulo2 = transforma_data(titulo2, 'Data de liquidação', formato = '%d/%m/%Y')
+titulo2 = transforma_data(titulo2, 'Data de vencimento', formato = '%d/%m/%Y')
+
+#Formatando como número
+titulo2['Oferta'] = transforma_numero(titulo2, 'Oferta')
+titulo2['Taxa média'] = transforma_numero(titulo2, 'Taxa média')
+titulo2['Taxa de corte'] = transforma_numero(titulo2, 'Taxa de corte')
+titulo2['Venda'] = transforma_numero(titulo2, 'Venda')
+titulo2['Financeiro (R$)'] = transforma_numero(titulo2, 'Financeiro (R$)')
+titulo2['Venda para Bacen'] = transforma_numero(titulo2, 'Venda para Bacen')
+titulo2['Financeiro para Bacen (R$)'] = transforma_numero(titulo2, 'Financeiro para Bacen (R$)')
+
 #Organizando dados de acordo com data do leilão
 titulo2 = organiza(titulo2, 'Data do leilão')
-
-#Formatando datas
-titulo2 = transforma_data(titulo2, 'Data do leilão')
-titulo2 = transforma_data(titulo2, 'Data de liquidação')
-titulo2 = transforma_data(titulo2, 'Data de vencimento')
 
 #Filtros
 #1)Tipo de leilão
