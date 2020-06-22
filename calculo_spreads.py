@@ -110,13 +110,13 @@ titulo = transforma_data(titulo, 'Data de liquidação', formato = '%d/%m/%Y')
 titulo = transforma_data(titulo, 'Data de vencimento', formato = '%d/%m/%Y')
 
 #Formatando como número
-titulo['Oferta'] = transforma_numero(titulo, 'Oferta')
-titulo['Taxa média'] = transforma_numero(titulo, 'Taxa média')
-titulo['Taxa de corte'] = transforma_numero(titulo, 'Taxa de corte')
-titulo['Venda'] = transforma_numero(titulo, 'Venda')
-titulo['Financeiro (R$)'] = transforma_numero(titulo, 'Financeiro (R$)')
-titulo['Venda para Bacen'] = transforma_numero(titulo, 'Venda para Bacen')
-titulo['Financeiro para Bacen (R$)'] = transforma_numero(titulo, 'Financeiro para Bacen (R$)')
+#titulo['Oferta'] = transforma_numero(titulo, 'Oferta')
+#titulo['Taxa média'] = transforma_numero(titulo, 'Taxa média')
+#titulo['Taxa de corte'] = transforma_numero(titulo, 'Taxa de corte')
+#titulo['Venda'] = transforma_numero(titulo, 'Venda')
+#titulo['Financeiro (R$)'] = transforma_numero(titulo, 'Financeiro (R$)')
+#titulo['Venda para Bacen'] = transforma_numero(titulo, 'Venda para Bacen')
+#titulo['Financeiro para Bacen (R$)'] = transforma_numero(titulo, 'Financeiro para Bacen (R$)')
 
 #Organizando dados de acordo com data do leilão
 titulo = organiza(titulo, 'Data do leilão')
@@ -181,13 +181,13 @@ titulo2 = transforma_data(titulo2, 'Data de liquidação', formato = '%d/%m/%Y')
 titulo2 = transforma_data(titulo2, 'Data de vencimento', formato = '%d/%m/%Y')
 
 #Formatando como número
-titulo2['Oferta'] = transforma_numero(titulo2, 'Oferta')
-titulo2['Taxa média'] = transforma_numero(titulo2, 'Taxa média')
-titulo2['Taxa de corte'] = transforma_numero(titulo2, 'Taxa de corte')
-titulo2['Venda'] = transforma_numero(titulo2, 'Venda')
-titulo2['Financeiro (R$)'] = transforma_numero(titulo2, 'Financeiro (R$)')
-titulo2['Venda para Bacen'] = transforma_numero(titulo2, 'Venda para Bacen')
-titulo2['Financeiro para Bacen (R$)'] = transforma_numero(titulo2, 'Financeiro para Bacen (R$)')
+#titulo2['Oferta'] = transforma_numero(titulo2, 'Oferta')
+#titulo2['Taxa média'] = transforma_numero(titulo2, 'Taxa média')
+#titulo2['Taxa de corte'] = transforma_numero(titulo2, 'Taxa de corte')
+#titulo2['Venda'] = transforma_numero(titulo2, 'Venda')
+#titulo2['Financeiro (R$)'] = transforma_numero(titulo2, 'Financeiro (R$)')
+#titulo2['Venda para Bacen'] = transforma_numero(titulo2, 'Venda para Bacen')
+#titulo2['Financeiro para Bacen (R$)'] = transforma_numero(titulo2, 'Financeiro para Bacen (R$)')
 
 #Organizando dados de acordo com data do leilão
 titulo2 = organiza(titulo2, 'Data do leilão')
