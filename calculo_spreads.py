@@ -145,7 +145,7 @@ for i in range(len(datas_disponiveis)):
     data_pro_nome = str(nome_datas_disponiveis.iloc[[i]])[-10:]
     data_pro_nome = data_pro_nome.replace('-','_')
     nome_titulo = tipo_titulo + '_' + str(data_pro_nome)
-    nome_aba = nome_titulo[:8]
+    nome_aba = nome_titulo[:11]
     exec(nome_titulo + " = aba_titulo")
     writer = diretorio + 'Titulos_spreads_taxas.xlsx'
     
@@ -216,7 +216,7 @@ for i in range(len(datas_disponiveis2)):
     data_pro_nome2 = str(nome_datas_disponiveis2.iloc[[i]])[-10:]
     data_pro_nome2 = data_pro_nome2.replace('-','_')
     nome_titulo2 = tipo_titulo2 + '_' + str(data_pro_nome2)
-    nome_aba2 = nome_titulo2[:10]
+    nome_aba2 = nome_titulo2[:13]
     exec(nome_titulo2 + " = aba_titulo2")
     with pd.ExcelWriter(writer, mode = 'a') as writer:
         aba_titulo2.to_excel(writer, index = False, sheet_name = nome_aba2)
