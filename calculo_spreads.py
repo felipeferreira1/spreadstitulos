@@ -37,7 +37,7 @@ def transforma_data(dados, nomecoluna, formato = '%Y-%m-%d'):
     '''Funcao que formata uma coluna de um dataframe com formato data
     Parâmetro de entrada: DataFrame, str, date
     Valor de retorno: DataFrame'''
-    dados[nomecoluna] = pd.to_datetime(dados[nomecoluna], format = formato)
+    dados[nomecoluna] = pd.to_datetime(dados[nomecoluna], format = formato).dt.date
     return dados
 
 def dados_serie_sgs(codigo_series, data_inicial = '01/01/2017', data_final = ajeita_data()):
