@@ -11,7 +11,7 @@ from datetime import datetime
 
 #Diretório raiz
 #diretorio = input('Insira o diretório onde está a planilha fonte:') + '/'
-diretorio = 'C:/Users/User/Desktop/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
+diretorio = 'D:/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
 
 #Lista de funções
 def ajeita_data():
@@ -76,11 +76,19 @@ def organiza(dados, nomecoluna):
     dados = dados.sort_values(by = [nomecoluna])
     return dados
 
-def filt_dados(dados, nome_coluna, condicao):
-    '''Funcao que filtra os dados de acordo com determinada condição
+def filt_dados_igual(dados, nome_coluna, condicao):
+    '''Funcao que filtra os dados de acordo com igualdade com determinada condição
     Parâmetro de entrada: DataFrame, str, str
     Valor de retorno: DataFrame'''
     is_condicao = dados[nome_coluna] == condicao
+    dados_filtrados = dados[is_condicao]
+    return dados_filtrados
+
+def filt_dados_dif(dados, nome_coluna, condicao):
+    '''Funcao que filtra os dados de acordo com diferença com determinada condição
+    Parâmetro de entrada: DataFrame, str, str
+    Valor de retorno: DataFrame'''
+    is_condicao = dados[nome_coluna] != condicao
     dados_filtrados = dados[is_condicao]
     return dados_filtrados
 
@@ -123,9 +131,11 @@ titulo = organiza(titulo, 'Data do leilão')
 
 #Filtros
 #1)Tipo de leilão
-titulo = filt_dados(titulo, 'Tipo de leilão', 'Venda')
+titulo = filt_dados_igual(titulo, 'Tipo de leilão', 'Venda')
 #2)Volta
-titulo = filt_dados(titulo, 'Volta', '1.ª volta')
+titulo = filt_dados_igual(titulo, 'Volta', '1.ª volta')
+#3)Venda
+titulo = filt_dados_dif(titulo, 'Venda', '0')
     
 #3)Data de vencimento e inserção da meta SELIC
 
@@ -139,7 +149,7 @@ tipo_titulo = 'LTN'
     
 for i in range(len(datas_disponiveis)):
     data_vencimento = datas_disponiveis[i]
-    aba_titulo = filt_dados(titulo, 'Data de vencimento', data_vencimento)
+    aba_titulo = filt_dados_igual(titulo, 'Data de vencimento', data_vencimento)
     aba_titulo = pd.merge(meta_selic, aba_titulo, on = 'Data do leilão')
     aba_titulo['Spread'] = aba_titulo['Taxa média'] - aba_titulo['Meta SELIC']
     data_pro_nome = str(nome_datas_disponiveis.iloc[[i]])[-10:]
@@ -194,9 +204,11 @@ titulo2 = organiza(titulo2, 'Data do leilão')
 
 #Filtros
 #1)Tipo de leilão
-titulo2 = filt_dados(titulo2, 'Tipo de leilão', 'Venda')
+titulo2 = filt_dados_igual(titulo2, 'Tipo de leilão', 'Venda')
 #2)Volta
-titulo2 = filt_dados(titulo2, 'Volta', '1.ª volta')
+titulo2 = filt_dados_igual(titulo2, 'Volta', '1.ª volta')
+#3)Venda
+titulo2 = filt_dados_dif(titulo2, 'Venda', 0)
     
 #3)Data de vencimento e inserção da meta SELIC
 
@@ -210,7 +222,7 @@ tipo_titulo2 = 'NTN_F'
     
 for i in range(len(datas_disponiveis2)):
     data_vencimento2 = datas_disponiveis2[i]
-    aba_titulo2 = filt_dados(titulo2, 'Data de vencimento', data_vencimento2)
+    aba_titulo2 = filt_dados_igual(titulo2, 'Data de vencimento', data_vencimento2)
     aba_titulo2 = pd.merge(meta_selic, aba_titulo2, on = 'Data do leilão')
     aba_titulo2['Spread'] = aba_titulo2['Taxa média'] - aba_titulo2['Meta SELIC']
     data_pro_nome2 = str(nome_datas_disponiveis2.iloc[[i]])[-10:]
