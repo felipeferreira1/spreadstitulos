@@ -11,7 +11,7 @@ from datetime import datetime
 
 #Diretório raiz
 #diretorio = input('Insira o diretório onde está a planilha fonte:') + '/'
-diretorio = 'D:/Work/Estudos títulos/planilhas_Tesouro/Histórico leilões/'
+diretorio = 'D:/Work/Estudos títulos/Resultados/'
 
 #Lista de funções
 def ajeita_data():
@@ -162,7 +162,7 @@ for i in range(len(datas_disponiveis)):
     if i == 0:
         aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)
     else:
-        with pd.ExcelWriter(writer, mode = 'a') as writer:
+        with pd.ExcelWriter(writer, engine="openpyxl", mode = 'a') as writer:
             aba_titulo.to_excel(writer, index = False, sheet_name = nome_aba)        
                     
     spread = aba_titulo[['Data do leilão', 'Spread']]
@@ -230,7 +230,7 @@ for i in range(len(datas_disponiveis2)):
     nome_titulo2 = tipo_titulo2 + '_' + str(data_pro_nome2)
     nome_aba2 = nome_titulo2[:13]
     exec(nome_titulo2 + " = aba_titulo2")
-    with pd.ExcelWriter(writer, mode = 'a') as writer:
+    with pd.ExcelWriter(writer, engine="openpyxl", mode = 'a') as writer:
         aba_titulo2.to_excel(writer, index = False, sheet_name = nome_aba2)
                     
     spread2 = aba_titulo2[['Data do leilão', 'Spread']]
@@ -256,7 +256,7 @@ tx_media_final = pd.merge(tx_media_merge, tx_media_merge2, how='outer',on='Data 
 tx_media_final = tx_media_final.sort_values(by = 'Data do leilão') #Ordenando cronologicamente datas
 
 
-with pd.ExcelWriter(writer, mode = 'a') as writer:  
+with pd.ExcelWriter(writer, engine="openpyxl", mode = 'a') as writer:  
     spread_final.to_excel(writer, index = False, sheet_name = 'Spreads')
     tx_media_final.to_excel(writer, index = False, sheet_name = 'Taxa média')
 
