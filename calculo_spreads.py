@@ -135,7 +135,7 @@ titulo = filt_dados_igual(titulo, 'Tipo de leilão', 'Venda')
 #2)Volta
 titulo = filt_dados_igual(titulo, 'Volta', '1.ª volta')
 #3)Venda
-titulo = filt_dados_dif(titulo, 'Venda', '0')
+titulo = filt_dados_dif(titulo, 'Venda', 0)
     
 #3)Data de vencimento e inserção da meta SELIC
 
