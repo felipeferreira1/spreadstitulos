@@ -64,7 +64,7 @@ def importar_xlsx(nome_arquivo):
     Parâmetro de entrada: excel
     Valor de retorno: pandas'''
     arquivo = pd.read_excel(diretorio + nome_arquivo, header = None)
-    arquivo = arquivo.drop(arquivo.index[[0,1,2,3,4,5,6,8]])
+    arquivo = arquivo.drop(arquivo.index[[0,1,2,3,4,5,7]])
     arquivo = arquivo.rename(columns = arquivo.iloc[0,:])
     arquivo = arquivo.drop(arquivo.index[[0]])
     return arquivo
