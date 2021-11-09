@@ -112,8 +112,8 @@ for(i in 1:length(datas_vencimento_ntn_f)){
   nome_aba <- paste("NTN_F", datas_vencimento_ntn_f[i], sep = "-") %>% gsub(x = , pattern = "-", replacement = "_")
   lista_de_nomes_ntn_f[i] <- nome_aba
   assign(nome_aba, filtrado)
-  spread <-  filtrado %>% select(`Data do leilão`, Spreads) %>% setNames(c("Data do leilão", as.character(lista_de_nomes_ltn[i])))
-  tx_media <-  filtrado %>% select(`Data do leilão`, `Taxa média`) %>% setNames(c("Data do leilão", as.character(lista_de_nomes_ltn[i])))
+  spread <-  filtrado %>% select(`Data do leilão`, Spreads) %>% setNames(c("Data do leilão", as.character(lista_de_nomes_ntn_f[i])))
+  tx_media <-  filtrado %>% select(`Data do leilão`, `Taxa média`) %>% setNames(c("Data do leilão", as.character(lista_de_nomes_ntn_f[i])))
   if(i == 1){
     export(filtrado, file = "Titulos_spreads_taxas.xlsx", which = nome_aba)
     spreads <- merge(spreads, spread, by = "Data do leilão", all = T)
